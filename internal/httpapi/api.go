@@ -111,7 +111,11 @@ func (a *API) proof(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, errBody{OK: false, Error: err.Error()})
 		return
 	}
-	p, _ := merkle.MakeProof(req.Blocks, req.Index)
+	p, err := merkle.MakeProof(req.Blocks, req.Index)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, errBody{OK: false, Error: err.Error()})
+		return
+	}
 	if p.Steps == nil {
 		p.Steps = []merkle.ProofStep{} // 空证明用 [] 而非 null
 	}
